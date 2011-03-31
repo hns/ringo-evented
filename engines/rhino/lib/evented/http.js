@@ -206,7 +206,7 @@ function wrapChunk(chunk) {
  * @returns an HttpChunk
  */
 function unwrapChunk(data) {
-  data = data || "";
+  data = String(data && data.content || data || "");
   return new DefaultHttpChunk(ChannelBuffers.wrappedBuffer(data.toByteArray()));
 }
 
