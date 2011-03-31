@@ -98,7 +98,6 @@ function putContent(message, data) {
     if (data.content) {
       message.content = ChannelBuffers.wrappedBuffer(data.content.toByteArray());
     }
-    HttpHeaders.setContentLength(message, message.content.readableBytes());
   }
 }
 
@@ -207,7 +206,8 @@ function wrapChunk(chunk) {
  * @returns an HttpChunk
  */
 function unwrapChunk(data) {
-  return new DefaultHttpChunk(ChannelBuffers.wrappedBuffer(data.content.toByteArray()));
+  data = data || "";
+  return new DefaultHttpChunk(ChannelBuffers.wrappedBuffer(data.toByteArray()));
 }
 
 /**
@@ -224,7 +224,7 @@ var HttpConnection = SocketConnection.extend(function (channel, options) {
  */
 HttpConnection.define('write', function (data) {
   var msg;
-  
+
   if (this.options.mode == 'client' && data.method) {
     msg = unwrapRequest(data);
   } else if (this.options.mode == 'server' && data.status) {

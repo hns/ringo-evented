@@ -1,6 +1,6 @@
 /*
 * A slightly contrived example of how to handle chunked and non-chunked requests in the same server.
-* 
+*
 * The pseudocode, in a nutshell:
 *
 * - In the 'request' message handler, check to see whether the 'chunked' attribute is true.
@@ -28,11 +28,9 @@ include('evented/http');
 var server = new HttpServer({ port: 4321 });
 
 server.listen({
-  connect: function (conn) {
-    print('\nconnection from', conn.remoteAddress.hostname);
-    conn.start(200, { 'content-type': 'text/plain' });
-  },
   request: function (conn, request) {
+    print('\nconnection from', conn.remoteAddress.hostname);
+    conn.write({status: 200, headers: { 'content-type': 'text/plain' }});
     if (request.chunked) {
       print('this request is chunked, data follows');
     } else {
