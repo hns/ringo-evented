@@ -1,7 +1,8 @@
 var {ChannelBuffers} = org.jboss.netty.buffer;
 var {Channels,
      ChannelFutureListener,
-     ChannelUpstreamHandler} = org.jboss.netty.channel;
+     ChannelUpstreamHandler,
+     SimpleChannelUpstreamHandler} = org.jboss.netty.channel;
 var {DefaultHttpChunk,
      DefaultHttpRequest,
      DefaultHttpResponse,
@@ -262,8 +263,9 @@ HttpServer.define('createPipeline', function () {
   if (this.options.compress) {
     pipeline.addLast('deflater', new HttpContentCompressor());
   }
-  pipeline.addLast('handler', new ChannelUpstreamHandler({
-    handleUpstream: this.dispatchUpstreamEvent.bind(this)
+  pipeline.addLast('handler', new JavaAdapter(
+    SimpleChannelUpstreamHandler, {
+    messageReceived: this.dispatchUpstreamEvent.bind(this)
   }));
 
   return pipeline;
